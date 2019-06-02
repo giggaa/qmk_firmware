@@ -15,6 +15,11 @@
  */
 #include "kbd6x.h"
 
+#ifdef RGBLIGHT_ENABLE
+#   include "rgblight.h"
+extern rgblight_config_t rgblight_config;
+#endif
+
 void matrix_init_kb(void) {
 	// put your keyboard start-up code here
 	// runs once when the firmware starts up
@@ -38,12 +43,21 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 
 void led_set_kb(uint8_t usb_led) {
 	if (usb_led & (1 << USB_LED_CAPS_LOCK)) {
-		DDRB |= (1 << 6); 
+		DDRB |= (1 << 6);
 		PORTB &= ~(1 << 6);
+    #ifdef RGBLIGHT_ENABLE
+      //Set color to purple.
+      rgblight_setrgb(153, 51, 255);
+      rgblight_enable();
+
+    #endif
 	} else {
-		DDRB &= ~(1 << 6); 
+		DDRB &= ~(1 << 6);
 		PORTB &= ~(1 << 6);
+    #ifdef RGBLIGHT_ENABLE
+      rgblight_disable();
+    #endif
 	}
-	
+
 	led_set_user(usb_led);
 }
